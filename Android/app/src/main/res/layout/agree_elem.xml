@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="#fefefe"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/tvPicture3"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/head"
+        app:riv_mutate_background="true"
+        app:riv_oval="true" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5"
+        android:background="#fefefe"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvName3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:textColor="#e3650e"
+            android:text="第四十号大街"
+            android:textSize="16dp"
+            android:gravity="left|bottom"/>
+        <TextView
+            android:id="@+id/tvText3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:textColor="#939393"
+            android:text="浩瀚世界，我想分享特别"
+            android:textSize="15dp"
+            android:gravity="left|center"/>
+    </LinearLayout>
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:src="@drawable/good"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
+        android:textColor="@color/black"
+        android:text="赞"
+        android:textSize="18dp"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2" />
+</LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" —————————————————————————"/>
+</LinearLayout>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:background="#f9f9f9"
+        android:orientation="horizontal">
+        <ImageView
+            android:src="@drawable/camera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/camera"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="关注"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="▼"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="9dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:text="推荐"
+            android:textColor="#9d9e9d"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"/>
+        <ImageView
+            android:id="@+id/add_main"
+            android:src="@drawable/extend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center" />
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mainblogRecyclerView"
+        android:layout_height="680dp"
+        android:layout_width="match_parent"
+        android:background="#ffffff" />
+    <LinearLayout
+        android:layout_height="40dp"
+        android:layout_width="match_parent"
+        android:background="#f9f9f9"
+        android:orientation="horizontal">
+        <ImageView
+            android:src="@drawable/main2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <ImageView
+            android:id="@+id/topic1"
+            android:src="@drawable/topic1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <ImageView
+            android:src="@drawable/find1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <ImageView
+            android:src="@drawable/message1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center" />
+        <ImageView
+            android:id="@+id/me"
+            android:src="@drawable/me1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:foregroundGravity="center"
+            android:clickable="true"/>
+    </LinearLayout>
+</LinearLayout>

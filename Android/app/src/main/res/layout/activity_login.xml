@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="25dp"
+            android:text="x"
+            android:id="@+id/close"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:text="帐号密码登录"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:id="@+id/test"
+            android:textColor="@color/black"/>
+
+        <EditText
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:hint="手机号或邮箱"
+            android:textSize="20dp"
+            android:id="@+id/tv_user_id"
+            />
+
+        <EditText
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:hint="密码"
+            android:textSize="20dp"
+            android:inputType="textPassword"
+            android:id="@+id/tv_user_pwd"
+            />
+
+        <CheckBox
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:text="登录注册即表示同意用户协议、隐私条款和天翼认证账号服务协议"
+            android:autoLink="all"
+            android:id="@+id/cb_agree"/>
+
+        <Button
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:text="登录"
+            android:id="@+id/btn_login"
+            android:background="@drawable/btn_login_style"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="未注册手机号登录后将自动注册"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="忘记密码"
+            android:layout_marginLeft="10dp"
+            android:textColor="#85B8DE"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
