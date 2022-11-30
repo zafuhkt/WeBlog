@@ -1,4 +1,4 @@
-package com.example.weblog
+package com.example.weblog.ui.MainActivity
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -9,9 +9,16 @@ import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weblog.R
 import com.example.weblog.databinding.ActivityBlogTextBinding
+import com.example.weblog.logic.model.comment_elem
+import com.example.weblog.logic.model.main_elem_Info
+import com.example.weblog.logic.model.thumbUp_elem
+import com.example.weblog.logic.network.HttpUtil
+import com.example.weblog.ui.MainActivity.ViewModel.blog_TextViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.activity_blog_text.*
@@ -19,10 +26,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.detail_elem.*
 import kotlinx.android.synthetic.main.main_elem.view.*
 import kotlinx.android.synthetic.main.relay_dialog_layout.*
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import org.json.JSONArray
+import java.io.IOException
 import java.net.URLEncoder
 import kotlin.concurrent.thread
 
@@ -30,20 +36,11 @@ import kotlin.concurrent.thread
 private var ListDetail = ArrayList<main_elem_Info>()
 private var CommentDetail = ArrayList<comment_elem>()
 private var ThumbUpDetail = ArrayList<thumbUp_elem>()
-private var temp_agree = 1
 
-var blog_id = 0
-var blog_user_id = 0
 @Suppress("DEPRECATION")
 class blog_Text : AppCompatActivity() {
 
-    /**********************sqlite3的helper************************/
-    private val dbHelper = MyDatabaseHelper(this, "MainElem.db", 1)
-
-    /**************************服务端地址***************************/
-    val server_ip = "192.168.226.18"
-    val search_thumbup_elem = "http://${server_ip}:8081/WeBlog_war_exploded/get_agree_elem.jsp"
-
+    lateinit var blog_textviewModel: blog_TextViewModel
     private lateinit var binding: ActivityBlogTextBinding
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +50,7 @@ class blog_Text : AppCompatActivity() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_blog_text)
         setContentView(binding.root)
+        blog_textviewModel = ViewModelProvider(this).get(blog_TextViewModel::class.java)
 
         /*******************设置顶部状态栏字体颜色*********************/
         getWindow().getDecorView().systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -60,10 +58,10 @@ class blog_Text : AppCompatActivity() {
         if (receiveElemInfo != null) {
             ListDetail.clear()
             val id = receiveElemInfo.id
-            blog_id = id
+            blog_textviewModel.blog_id = id
             val Image = receiveElemInfo.Image
             val user_id=receiveElemInfo.user_id
-            blog_user_id = user_id
+            blog_textviewModel.blog_user_id = user_id
             val name = receiveElemInfo.name
             val time = receiveElemInfo.time
             val place = receiveElemInfo.place
@@ -80,9 +78,9 @@ class blog_Text : AppCompatActivity() {
         }
 
         /**********************初始化页面的blog*********************/
-        load_comment()
-        load_thumbUp()
-
+        //load_comment()
+        //load_thumbUp()
+        load()
         /**********************recyclerView的装配******************/
         val commentElemRecyclerView = commentRecyclerView
         val detaillayoutManager = LinearLayoutManager(this)
@@ -121,26 +119,27 @@ class blog_Text : AppCompatActivity() {
 
         /**********************点击下方赞进行点赞********************/
         binding.Agree.setOnClickListener {
-            if(temp_agree == 1) {
+            if(blog_textviewModel.temp_agree== 1) {
                 commentRecyclerView.adapter?.notifyDataSetChanged()
                 ListDetail[0].thumbUp = ListDetail[0].thumbUp - 1
-                temp_agree = -1
+                blog_textviewModel.temp_agree = -1
                 binding.Agree.setTextColor(Color.rgb(98, 98, 98))
                 Agree()
             }
             else{
                 commentRecyclerView.adapter?.notifyDataSetChanged()
                 ListDetail[0].thumbUp = ListDetail[0].thumbUp + 1
-                temp_agree = 1
+                blog_textviewModel.temp_agree = 1
                 binding.Agree.setTextColor(Color.rgb(255, 0, 0))
                 DisAgree()
             }
-            load_thumbUp()
+            //load_thumbUp()
+            load()
         }
     }
     /********************弹出评论框的方法*******************/
     private fun showCommentDialog() {
-        val dialog = BottomSheetDialog(this,R.style.BottomSheetEdit)
+        val dialog = BottomSheetDialog(this, R.style.BottomSheetEdit)
         var commentView = LayoutInflater.from(this).inflate(R.layout.comment_dialog_layout, null)
         val commentText = commentView.findViewById(R.id.dialog_comment_et) as EditText
         val bt_comment = commentView.findViewById(R.id.dialog_comment_bt) as Button
@@ -205,35 +204,6 @@ class blog_Text : AppCompatActivity() {
         val resId = resources.getIdentifier(imageName, "drawable", ctx.packageName)
         return resId;
     }
-
-    /**********************load函数加载comment********************/
-    @SuppressLint("NotifyDataSetChanged")
-    private fun load_comment() {
-        thread {
-            try {
-                var server_url =
-                    "http://${server_ip}:8081/WeBlog_war_exploded/Comment_find.jsp"
-                val client = OkHttpClient()
-                val requestBody = FormBody.Builder()
-                    .add("blog_id", blog_id.toString())  //main_user_id.toString())
-                    .build()
-                val request = Request.Builder()
-                    .url(server_url)
-                    .post(requestBody)
-                    .build()
-                val response = client.newCall(request).execute()
-                val responseData = response.body?.string()
-                if (responseData != null) {
-                    runOnUiThread {
-                        parseJsonComment(responseData.trim())
-                    }
-                }
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun parseJsonComment(jsonStr:String){
         CommentDetail.clear()
@@ -260,33 +230,36 @@ class blog_Text : AppCompatActivity() {
         }
     }
 
-    /**********************load函数加载thumbUp********************/
-    private fun load_thumbUp() {
-        thread {
-            try {
-                var server_url =
-                    "http://${server_ip}:8081/WeBlog_war_exploded/Agree_find.jsp"
-                val client = OkHttpClient()
-                val requestBody = FormBody.Builder()
-                    .add("blog_id", blog_id.toString())
-                    .build()
-                val request = Request.Builder()
-                    .url(server_url)
-                    .post(requestBody)
-                    .build()
-                val response = client.newCall(request).execute()
+    private fun load(){
+        HttpUtil.sendOkHttpRequestLoad("http://${blog_textviewModel.server_ip}:8081/WeBlog_war_exploded/Agree_find.jsp", blog_textviewModel.blog_id, object :
+            Callback {
+            override fun onResponse(call: Call, response: Response) {
                 val responseData = response.body?.string()
                 if (responseData != null) {
                     runOnUiThread {
                         parseJsonAgree(responseData.trim())
                     }
                 }
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
             }
-        }
+            override fun onFailure(call: Call, e: IOException) {
+                TODO("Not yet implemented")
+            }
+        })
+        HttpUtil.sendOkHttpRequestLoad("http://${blog_textviewModel.server_ip}:8081/WeBlog_war_exploded/Comment_find.jsp", blog_textviewModel.blog_id, object :
+            Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val responseData = response.body?.string()
+                if (responseData != null) {
+                    runOnUiThread {
+                        parseJsonComment(responseData.trim())
+                    }
+                }
+            }
+            override fun onFailure(call: Call, e: IOException) {
+                TODO("Not yet implemented")
+            }
+        })
     }
-
     @SuppressLint("NotifyDataSetChanged")
     private fun parseJsonAgree(jsonStr:String){
         ThumbUpDetail.clear()
@@ -318,11 +291,11 @@ class blog_Text : AppCompatActivity() {
         thread {
             try {
                 var server_url =
-                    "http://${server_ip}:8081/WeBlog_war_exploded/Agree_insert.jsp"
+                    "http://${blog_textviewModel.server_ip}:8081/WeBlog_war_exploded/Agree_insert.jsp"
                 val client = OkHttpClient()
                 val requestBody = FormBody.Builder()
-                    .add("id", blog_id.toString())
-                    .add("user_id", blog_user_id.toString())
+                    .add("id", blog_textviewModel.blog_id.toString())
+                    .add("user_id", blog_textviewModel.blog_user_id.toString())
                     .add("thumbup", ListDetail[0].thumbUp.toString())
                     .add("text", URLEncoder.encode("说的很有道理","UTF-8"))
                     //.add("text", URLEncoder.encode(ListDetail[0].Text,"UTF-8"))
@@ -350,11 +323,11 @@ class blog_Text : AppCompatActivity() {
         thread {
             try {
                 var server_url =
-                    "http://${server_ip}:8081/WeBlog_war_exploded/Agree_delete.jsp"
+                    "http://${blog_textviewModel.server_ip}:8081/WeBlog_war_exploded/Agree_delete.jsp"
                 val client = OkHttpClient()
                 val requestBody = FormBody.Builder()
-                    .add("id", blog_id.toString())
-                    .add("user_id", blog_user_id.toString())
+                    .add("id", blog_textviewModel.blog_id.toString())
+                    .add("user_id", blog_textviewModel.blog_user_id.toString())
                     .add("thumbup", ListDetail[0].thumbUp.toString())
                     .add("text", URLEncoder.encode("说的很有道理","UTF-8"))
                     .build()
@@ -386,7 +359,7 @@ class blog_Text : AppCompatActivity() {
     }
 
     /**********************评论的Holder**********************/
-    private class CommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class CommentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image2: ImageView = view.findViewById(R.id.tvPicture2)
         val name2: TextView = view.findViewById(R.id.tvName2)
         val time2: TextView = view.findViewById(R.id.tvTime2)
@@ -395,7 +368,7 @@ class blog_Text : AppCompatActivity() {
     }
 
     /**********************点赞的Holder**********************/
-    private class ThumbUpViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ThumbUpViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image3: ImageView = view.findViewById(R.id.tvPicture3)
         val name3: TextView = view.findViewById(R.id.tvName3)
         val text3: TextView = view.findViewById(R.id.tvText3)
@@ -422,7 +395,7 @@ class blog_Text : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
             val info = ListDetail[position]
-            holder.image.setImageResource(info.Image)
+            //holder.image.setImageResource(info.Image)
             holder.name.text = info.name
             holder.time.text = info.time
             holder.place.text = info.place
@@ -447,48 +420,6 @@ class blog_Text : AppCompatActivity() {
                 }
             }
         }
-
         override fun getItemCount() = ListDetail.size
     }
-
-    /**********************评论的适配器************************/
-    private class CommentAdapter(val CommentDetail: List<comment_elem>) :
-        RecyclerView.Adapter<CommentViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-            val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.comment_elem, parent, false)
-            return CommentViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-            val commentinfo = CommentDetail[position]
-            holder.image2.setImageResource(commentinfo.Image)
-            holder.name2.text = commentinfo.name
-            holder.time2.text = commentinfo.time
-            holder.place2.text = commentinfo.place
-            holder.text2.text = commentinfo.Text
-        }
-
-        override fun getItemCount() = CommentDetail.size
-    }
-
-    /**********************点赞的适配器************************/
-    private class ThumbUpAdapter(val ThumbUptDetail: List<thumbUp_elem>) :
-        RecyclerView.Adapter<ThumbUpViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThumbUpViewHolder {
-            val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.agree_elem, parent, false)
-            return ThumbUpViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ThumbUpViewHolder, position: Int) {
-            val thumbuptinfo = ThumbUptDetail[position]
-            holder.image3.setImageResource(thumbuptinfo.Image)
-            holder.name3.text = thumbuptinfo.name
-            holder.text3.text = thumbuptinfo.Text
-        }
-
-        override fun getItemCount() = ThumbUptDetail.size
-    }
-
 }

@@ -1,11 +1,13 @@
-package com.example.weblog
+package com.example.weblog.ui.SelfActivity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.example.weblog.databinding.ActivityMainBinding
+import com.example.weblog.R
 import com.example.weblog.databinding.ActivitySelfBinding
+import com.example.weblog.ui.MainActivity.MainActivity
+import com.example.weblog.ui.SuperActivity.topic
 
 
 @Suppress("DEPRECATION")
@@ -23,13 +25,13 @@ class self : AppCompatActivity() {
 
         /**********************点击主页进行跳转***********************/
         binding.main.setOnClickListener{
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
         /*******************点击左下角超话进行跳转********************/
         binding.topic1.setOnClickListener{
-            val intent = Intent(this,topic::class.java)
+            val intent = Intent(this, topic::class.java)
             startActivity(intent)
         }
 

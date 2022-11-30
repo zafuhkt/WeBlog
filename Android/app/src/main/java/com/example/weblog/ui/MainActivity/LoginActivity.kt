@@ -1,12 +1,12 @@
-package com.example.weblog
+package com.example.weblog.ui.MainActivity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.example.weblog.R
 import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.Exception
-import java.net.URLEncoder
 import kotlin.concurrent.thread
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
@@ -14,7 +14,7 @@ import okhttp3.Request
 
 
 class LoginActivity : AppCompatActivity() {
-    val SERVER_IP="192.168.226.18"
+    val SERVER_IP="192.168.33.18"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -66,8 +66,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-            //线程外
-
         }
         close.setOnClickListener{
             finish()
